@@ -55,3 +55,11 @@ CREATE TABLE carts (
     FOREIGN KEY (customer_id) REFERENCES customers(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+properties file 
+JAVA_OPTS=-Xms256m -Xmx1024m
+yml file
+services:
+  product-service:
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx1024m
