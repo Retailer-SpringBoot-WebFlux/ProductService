@@ -2,10 +2,16 @@ package com.example.ProductService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/products")
@@ -37,16 +43,13 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Mono<Product> getProductById(@PathVariable("id") Long id) {
-        logger.info("Fetching product details for ID: {}", id);
+    public Mono<ResponseEntity<Product>> getProductById(@PathVariable Long id) {
         return service.getProductById(id)
-                .doOnSuccess(product -> {
-                    if (product != null) {
-                        logger.info("Successfully fetched product: {}", product);
-                    } else {
-                        logger.warn("Product with ID {} not found", id);
-                    }
-                })
-                .doOnError(error -> logger.error("Error fetching product with ID: {}", id, error));
+                .map(ResponseEntity::ok)
+                .onErrorResume(ResponseStatusException.class, ex ->
+                        Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body(new Product("Product not found")))
+                );
     }
+
 }
