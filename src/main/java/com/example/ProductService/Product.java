@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
@@ -24,10 +25,9 @@ public class Product {
     private String category;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    @Transient
+    private String error;
 
-    private String error; // ✅ Error message field
-
-    // ✅ Constructor for error response
     public Product(String error) {
         this.error = error;
     }
